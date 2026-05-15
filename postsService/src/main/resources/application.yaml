@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: postsService
+  datasource:
+    url: jdbc:postgresql://localhost:5433/postsDB
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+
+server:
+  port: 9010
+  servlet:
+    context-path: /api/v1/posts

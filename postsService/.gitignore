@@ -1,0 +1,81 @@
+### ========================
+### Java / Maven Build
+### ========================
+HELP.md
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+*.class
+*.jar
+!**/src/main/**/lib/*.jar
+*.war
+*.ear
+*.log
+hs_err_pid*
+replay_pid*
+
+### ========================
+### Maven Wrapper
+### ========================
+.mvn/wrapper/maven-wrapper.jar
+
+### ========================
+### IDE & Editor Files
+### ========================
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Eclipse / STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code
+.vscode/
+
+### ========================
+### Gradle (if migrated later)
+### ========================
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+.gradle/
+
+### ========================
+### OS Generated Files
+### ========================
+.DS_Store
+Thumbs.db
+*~
+
+### ========================
+### Environment & Secrets
+### ========================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+
+### ========================
+### Spring Boot
+### ========================
+spring-shell.log

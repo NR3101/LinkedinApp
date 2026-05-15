@@ -1,0 +1,40 @@
+# Auto-detect text files and normalize line endings
+* text=auto
+
+# Java sources
+*.java text diff=java
+*.kt text diff=kotlin
+*.groovy text diff=java
+
+# Maven wrapper
+mvnw text eol=lf
+*.cmd text eol=crlf
+
+# Properties & config
+*.properties text
+*.yaml text
+*.yml text
+*.xml text
+
+# Documentation
+*.md text diff=markdown
+*.txt text
+LICENSE text
+
+# Shell scripts
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Docker
+Dockerfile text
+docker-compose*.yml text
+
+# Binary files (prevent diff / merge)
+*.jar binary
+*.class binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary

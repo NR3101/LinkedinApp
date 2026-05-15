@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: userService
+  datasource:
+    url: jdbc:postgresql://localhost:5434/userDB
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+server:
+  port: 9020
+  servlet:
+    context-path: /api/v1/users
+
+jwt:
+  secretKey: ${JWT_SECRET_KEY}

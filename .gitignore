@@ -1,0 +1,99 @@
+### ========================
+### IDE & Editor Files
+### ========================
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Eclipse / STS
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+.apt_generated
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code
+.vscode/
+
+### ========================
+### OS Generated Files
+### ========================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+.nfs*
+
+### ========================
+### Java / Maven Build
+### ========================
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+hs_err_pid*
+replay_pid*
+
+### ========================
+### Maven Wrapper (keep wrapper props, ignore jar)
+### ========================
+.mvn/wrapper/maven-wrapper.jar
+
+### ========================
+### Environment & Secrets
+### ========================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+
+### ========================
+### Docker
+### ========================
+docker-compose.override.yml
+
+### ========================
+### Spring Boot Generated
+### ========================
+HELP.md
+
+### ========================
+### Misc
+### ========================
+*.swp
+*.swo
+*.bak
+*.tmp
+*.orig

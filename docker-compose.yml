@@ -1,0 +1,48 @@
+services:
+  postsdb:
+    image: postgres:latest
+    container_name: postsdb
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: postsDB
+    ports:
+      - "5433:5432"
+    volumes:
+      - posts_data:/var/lib/postgresql
+    networks:
+      - linkedin-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d postsDB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  userdb:
+    image: postgres:latest
+    container_name: userdb
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: userDB
+    ports:
+      - "5434:5432"
+    volumes:
+      - user_data:/var/lib/postgresql
+    networks:
+      - linkedin-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d userDB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  posts_data:
+  user_data:
+
+networks:
+  linkedin-network:
+    driver: bridge
+
+
