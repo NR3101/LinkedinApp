@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: connections-service
+  neo4j:
+    uri: bolt://localhost:7687
+    authentication:
+      username: neo4j
+      password: admin1234
+  data:
+    neo4j:
+      database: linkedinapp
+
+
+server:
+  port: 9030
+  servlet:
+    context-path: /connections

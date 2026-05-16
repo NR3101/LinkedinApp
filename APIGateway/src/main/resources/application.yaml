@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: user-service
+              uri: lb://user-service
+              predicates:
+                - Path=/api/v1/users/**
+              filters:
+                - StripPrefix=2
+            - id: posts-service
+              uri: lb://posts-service
+              predicates:
+                - Path=/api/v1/posts/**
+              filters:
+                - StripPrefix=2
+            - id: connections-service
+              uri: lb://connections-service
+              predicates:
+                - Path=/api/v1/connections/**
+              filters:
+                - StripPrefix=2
+
+
+server:
+  port: 8080
+

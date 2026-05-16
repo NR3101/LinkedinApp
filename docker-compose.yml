@@ -1,6 +1,6 @@
 services:
   postsdb:
-    image: postgres:latest
+    image: postgres:alpine
     container_name: postsdb
     environment:
       POSTGRES_USER: root
@@ -19,7 +19,7 @@ services:
       retries: 5
 
   userdb:
-    image: postgres:latest
+    image: postgres:alpine
     container_name: userdb
     environment:
       POSTGRES_USER: root
