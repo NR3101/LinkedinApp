@@ -4,7 +4,7 @@ spring:
   cloud:
     gateway:
       server:
-        webmvc:
+        webflux:
           routes:
             - id: user-service
               uri: lb://user-service
@@ -12,20 +12,26 @@ spring:
                 - Path=/api/v1/users/**
               filters:
                 - StripPrefix=2
+
             - id: posts-service
               uri: lb://posts-service
               predicates:
                 - Path=/api/v1/posts/**
               filters:
                 - StripPrefix=2
+                - name: AuthenticationFilter
+
             - id: connections-service
               uri: lb://connections-service
               predicates:
                 - Path=/api/v1/connections/**
               filters:
                 - StripPrefix=2
-
+                - name: AuthenticationFilter
 
 server:
   port: 8080
+
+jwt:
+  secretKey: ${JWT_SECRET_KEY}
 

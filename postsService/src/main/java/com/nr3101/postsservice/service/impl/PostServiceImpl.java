@@ -1,5 +1,7 @@
 package com.nr3101.postsservice.service.impl;
 
+import com.nr3101.postsservice.auth.AuthContextHolder;
+import com.nr3101.postsservice.client.ConnectionsServiceClient;
 import com.nr3101.postsservice.dto.request.PostCreateDto;
 import com.nr3101.postsservice.dto.response.PostDto;
 import com.nr3101.postsservice.entity.Post;
@@ -21,10 +23,12 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final ModelMapper modelMapper;
+    private final ConnectionsServiceClient connectionsServiceClient;
 
     @Override
-    public PostDto createPost(PostCreateDto postCreateDto, Long userId) {
-        log.info("Creating post with data: {}", postCreateDto);
+    public PostDto createPost(PostCreateDto postCreateDto) {
+        Long userId = AuthContextHolder.getCurrentUserId();
+        log.info("Creating post with content: {} for user ID: {}", postCreateDto.getContent(), userId);
 
         Post post = modelMapper.map(postCreateDto, Post.class);
         post.setUserId(userId);
@@ -40,6 +44,11 @@ public class PostServiceImpl implements PostService {
         log.info("Fetching post with ID: {}", postId);
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with ID: " + postId));
+
+        // Todo: Remove in future
+        Long userId = AuthContextHolder.getCurrentUserId();
+        connectionsServiceClient.getFirstDegreeConnections(String.valueOf(userId))
+                .forEach(connection -> log.info("Connection ID: {}, Name: {}", connection.getId(), connection.getName()));
 
         return modelMapper.map(post, PostDto.class);
     }

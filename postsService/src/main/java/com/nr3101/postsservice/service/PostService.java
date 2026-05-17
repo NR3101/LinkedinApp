@@ -5,7 +5,7 @@ import com.nr3101.postsservice.dto.response.PostDto;
 import org.springframework.data.domain.Page;
 
 public interface PostService {
-    PostDto createPost(PostCreateDto postCreateDto, Long userId);
+    PostDto createPost(PostCreateDto postCreateDto);
 
     PostDto getPostById(Long postId);
 

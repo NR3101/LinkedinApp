@@ -25,7 +25,7 @@ public class PostController {
     ) {
         log.info("Received request to create post: {}", postCreateDto);
         // TODO: Replace hardcoded user ID with actual authenticated user ID
-        PostDto createdPost = postService.createPost(postCreateDto, 1L);
+        PostDto createdPost = postService.createPost(postCreateDto);
         log.info("Post created successfully: {}", createdPost);
         return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
     }
