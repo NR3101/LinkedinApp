@@ -11,5 +11,5 @@ import java.util.List;
 public interface ConnectionsServiceClient {
 
     @GetMapping("/core/{userId}/first-degree")
-    List<PersonDto> getFirstDegreeConnections(@PathVariable String userId);
+    List<PersonDto> getFirstDegreeConnections(@PathVariable Long userId);
 }

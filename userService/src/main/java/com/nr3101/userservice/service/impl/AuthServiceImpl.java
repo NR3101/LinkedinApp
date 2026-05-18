@@ -4,6 +4,7 @@ import com.nr3101.userservice.dto.request.LoginRequestDto;
 import com.nr3101.userservice.dto.request.SignupRequestDto;
 import com.nr3101.userservice.dto.response.UserDto;
 import com.nr3101.userservice.entity.User;
+import com.nr3101.userservice.event.UserCreatedEvent;
 import com.nr3101.userservice.exception.ConflictException;
 import com.nr3101.userservice.exception.UnauthorizedException;
 import com.nr3101.userservice.repository.UserRepository;
@@ -12,6 +13,7 @@ import com.nr3101.userservice.utils.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import static com.nr3101.userservice.utils.Bcrypt.checkPassword;
@@ -25,6 +27,7 @@ public class AuthServiceImpl implements AuthService {
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final KafkaTemplate<Long, UserCreatedEvent> userCreatedKafkaTemplate;
 
     @Override
     public UserDto signup(SignupRequestDto signupRequestDto) {
@@ -40,6 +43,15 @@ public class AuthServiceImpl implements AuthService {
 
         User savedUser = userRepository.save(user);
         log.info("User created with email: {}", savedUser.getEmail());
+
+        // Publish user created event to Kafka
+        UserCreatedEvent userCreatedEvent = UserCreatedEvent.builder()
+                .userId(savedUser.getId())
+                .name(savedUser.getName())
+                .build();
+        userCreatedKafkaTemplate.send("user_created_topic", userCreatedEvent);
+        log.info("Published UserCreatedEvent for userId: {}", savedUser.getId());
+
         return modelMapper.map(savedUser, UserDto.class);
     }
 

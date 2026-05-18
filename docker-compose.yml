@@ -37,12 +37,78 @@ services:
       timeout: 5s
       retries: 5
 
+  notificationdb:
+    image: postgres:alpine
+    container_name: notificationdb
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: notificationDB
+    ports:
+      - "5435:5432"
+    volumes:
+      - notification_data:/var/lib/postgresql
+    networks:
+      - linkedin-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d notificationDB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kafka:
+    image: apache/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      # KRaft mode (single-node controller+broker)
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'
+      # listeners
+      KAFKA_LISTENERS: 'PLAINTEXT://:9092,CONTROLLER://:9093'
+      # advertise localhost so services running on the host can connect using localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://localhost:9092'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT'
+      # topics / transactions settings
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+      # heap small for local dev
+      KAFKA_HEAP_OPTS: '-Xms128m -Xmx256m'
+      # allow plaintext for local dev
+      ALLOW_PLAINTEXT_LISTENER: 'yes'
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    networks:
+      - linkedin-network
+
+  kafka-ui:
+    image: ghcr.io/kafbat/kafka-ui:latest
+    container_name: kafka-ui
+    depends_on:
+      - kafka
+    environment:
+      # when using host networking we bind the UI directly on the host port
+      SERVER_PORT: 8090
+      KAFKA_CLUSTERS_0_NAME: local
+      # when kafka-ui runs with host networking the Docker DNS name 'kafka' is not resolvable
+      # use localhost so the UI can reach the broker advertised as localhost
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: localhost:9092
+      DYNAMIC_CONFIG_ENABLED: 'true'
+    network_mode: host
+
 volumes:
   posts_data:
   user_data:
+  notification_data:
+  kafka_data:
 
 networks:
   linkedin-network:
     driver: bridge
-
-

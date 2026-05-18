@@ -3,8 +3,10 @@ package com.nr3101.postsservice.service.impl;
 import com.nr3101.postsservice.auth.AuthContextHolder;
 import com.nr3101.postsservice.client.ConnectionsServiceClient;
 import com.nr3101.postsservice.dto.request.PostCreateDto;
+import com.nr3101.postsservice.dto.response.PersonDto;
 import com.nr3101.postsservice.dto.response.PostDto;
 import com.nr3101.postsservice.entity.Post;
+import com.nr3101.postsservice.event.PostCreatedEvent;
 import com.nr3101.postsservice.exception.ResourceNotFoundException;
 import com.nr3101.postsservice.repository.PostRepository;
 import com.nr3101.postsservice.service.PostService;
@@ -14,7 +16,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +29,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final ModelMapper modelMapper;
     private final ConnectionsServiceClient connectionsServiceClient;
+    private final KafkaTemplate<Long, PostCreatedEvent> postCreatedKafkaTemplate;
 
     @Override
     public PostDto createPost(PostCreateDto postCreateDto) {
@@ -33,6 +39,20 @@ public class PostServiceImpl implements PostService {
         Post post = modelMapper.map(postCreateDto, Post.class);
         post.setUserId(userId);
         Post savedPost = postRepository.save(post);
+
+        // Publish post created event to the connections of the user via Kafka
+        List<PersonDto> connections = connectionsServiceClient.getFirstDegreeConnections(userId);
+        connections.forEach(connection -> {
+            PostCreatedEvent postCreatedEvent = PostCreatedEvent.builder()
+                    .postId(savedPost.getId())
+                    .authorId(userId)
+                    .connectionId(connection.getUserId())
+                    .content(savedPost.getContent())
+                    .build();
+
+            postCreatedKafkaTemplate.send("post_created_topic", postCreatedEvent);
+            log.info("Published PostCreatedEvent for post ID: {} to connection ID: {}", savedPost.getId(), connection.getUserId());
+        });
 
 
         log.info("Post saved successfully with ID: {}", savedPost.getId());
@@ -44,11 +64,6 @@ public class PostServiceImpl implements PostService {
         log.info("Fetching post with ID: {}", postId);
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with ID: " + postId));
-
-        // Todo: Remove in future
-        Long userId = AuthContextHolder.getCurrentUserId();
-        connectionsServiceClient.getFirstDegreeConnections(String.valueOf(userId))
-                .forEach(connection -> log.info("Connection ID: {}, Name: {}", connection.getId(), connection.getName()));
 
         return modelMapper.map(post, PostDto.class);
     }

@@ -7,4 +7,10 @@ import java.util.List;
 public interface ConnectionsService {
 
     List<Person> getFirstDegreeConnectionsOfUser(Long userId);
+
+    void sendConnectionRequest(Long toUserId);
+
+    void acceptConnectionRequest(Long fromUserId);
+
+    void rejectConnectionRequest(Long fromUserId);
 }
