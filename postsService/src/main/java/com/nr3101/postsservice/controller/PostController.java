@@ -8,8 +8,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/core")
@@ -19,13 +21,13 @@ public class PostController {
 
     private final PostService postService;
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PostDto> createPost(
-            @Valid @RequestBody PostCreateDto postCreateDto
+            @Valid @RequestPart("post") PostCreateDto postCreateDto,
+            @RequestPart(value = "file", required = false) MultipartFile file
     ) {
         log.info("Received request to create post: {}", postCreateDto);
-        // TODO: Replace hardcoded user ID with actual authenticated user ID
-        PostDto createdPost = postService.createPost(postCreateDto);
+        PostDto createdPost = postService.createPost(postCreateDto, file);
         log.info("Post created successfully: {}", createdPost);
         return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
     }

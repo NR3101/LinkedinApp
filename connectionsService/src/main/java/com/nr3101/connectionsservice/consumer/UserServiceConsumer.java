@@ -1,8 +1,8 @@
 package com.nr3101.connectionsservice.consumer;
 
 import com.nr3101.connectionsservice.dto.request.PersonRequestDto;
-import com.nr3101.userservice.event.UserCreatedEvent;
 import com.nr3101.connectionsservice.service.PersonService;
+import com.nr3101.userservice.event.UserCreatedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;

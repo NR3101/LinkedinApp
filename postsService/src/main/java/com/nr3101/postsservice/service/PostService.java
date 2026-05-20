@@ -3,9 +3,10 @@ package com.nr3101.postsservice.service;
 import com.nr3101.postsservice.dto.request.PostCreateDto;
 import com.nr3101.postsservice.dto.response.PostDto;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface PostService {
-    PostDto createPost(PostCreateDto postCreateDto);
+    PostDto createPost(PostCreateDto postCreateDto, MultipartFile file);
 
     PostDto getPostById(Long postId);
 

@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: uploader-service
+
+server:
+  port: 9050
+  servlet:
+    context-path: /uploads
+
+cloudinary:
+  cloud-name: dzilcxvih
+  api-key: 186393225366316
+  api-secret: oBvNsnD34e5gUUHlcgDOHA4oYyM

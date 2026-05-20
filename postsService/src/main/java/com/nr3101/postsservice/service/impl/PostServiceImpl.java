@@ -2,6 +2,7 @@ package com.nr3101.postsservice.service.impl;
 
 import com.nr3101.postsservice.auth.AuthContextHolder;
 import com.nr3101.postsservice.client.ConnectionsServiceClient;
+import com.nr3101.postsservice.client.UploaderServiceClient;
 import com.nr3101.postsservice.dto.request.PostCreateDto;
 import com.nr3101.postsservice.dto.response.PersonDto;
 import com.nr3101.postsservice.dto.response.PostDto;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -29,15 +31,23 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final ModelMapper modelMapper;
     private final ConnectionsServiceClient connectionsServiceClient;
+    private final UploaderServiceClient uploaderServiceClient;
     private final KafkaTemplate<Long, PostCreatedEvent> postCreatedKafkaTemplate;
 
     @Override
-    public PostDto createPost(PostCreateDto postCreateDto) {
+    public PostDto createPost(PostCreateDto postCreateDto, MultipartFile file) {
         Long userId = AuthContextHolder.getCurrentUserId();
         log.info("Creating post with content: {} for user ID: {}", postCreateDto.getContent(), userId);
 
+        String fileUrl = null;
+        // Handle file upload if a file is provided
+        if (file != null && !file.isEmpty()) {
+            fileUrl = uploaderServiceClient.uploadFile(file);
+        }
+
         Post post = modelMapper.map(postCreateDto, Post.class);
         post.setUserId(userId);
+        post.setImageUrl(fileUrl);
         Post savedPost = postRepository.save(post);
 
         // Publish post created event to the connections of the user via Kafka
